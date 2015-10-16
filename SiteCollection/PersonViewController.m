@@ -80,6 +80,11 @@
                                                                     style:UIBarButtonItemStyleDone target:self action:@selector(editData)];
     
     self.navigationItem.rightBarButtonItem=rightButton;
+    
+    
+    
+    msgView =[[UIImageView alloc]initWithFrame:CGRectMake((bounds.size.width-bounds.origin.x)/2-110, 200, 220, 60)];
+    
 }
 
 
@@ -190,14 +195,9 @@
 
 -(void)UpdateHits:(NSString *) indexID :(NSString * )tableName {
     FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
-    NSString * SQL = [NSString stringWithFormat:@"SELECT HITS FROM %@ WHERE ID=? ",tableName];
-    int iHits=1;
-    FMResultSet *rs=[db executeQuery:SQL,indexID ];
-    while ([rs next]){
-        iHits =[rs intForColumn:@"HITS"]+1;
-    }
-    SQL = [NSString stringWithFormat:@"UPDATE %@ SET HITS=%d WHERE ID=?",tableName,iHits];
-    [db executeUpdate:SQL,indexID] ;
+    
+    [db executeUpdate:@"UPDATE PERSON_URL SET HITS=HITS+1 WHERE ID=?",indexID] ;
+
 }
 
 -(void)editData{
@@ -264,7 +264,7 @@
         //        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
         //                         withRowAnimation:UITableViewRowAnimationAutomatic];
         
-        NSLog(@"DELETE DATA");
+       // NSLog(@"DELETE DATA");
         FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
         
         [db executeUpdate:@"DELETE FROM PERSON_URL WHERE ID=?",[idArray objectAtIndex:indexPath.row]] ;
@@ -275,9 +275,9 @@
 
         [self.MytableView reloadData];
     }
-    if (editingStyle== UITableViewCellEditingStyleNone) {
-        NSLog(@"edit row = %ld",indexPath.row);
-    }
+//    if (editingStyle== UITableViewCellEditingStyleNone) {
+//        NSLog(@"edit row = %ld",indexPath.row);
+//    }
 }
 
 
@@ -338,28 +338,27 @@ sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
 }
 
 -(void)loadMsgImg:(NSString * )imgName {
-    CGRect bounds = self.view.bounds;
+    //CGRect bounds = self.view.bounds;
     UIImage * msgImg =[UIImage imageNamed:imgName];
-    msgView =[[UIImageView alloc]initWithFrame:CGRectMake((bounds.size.width-bounds.origin.x)/2-110, 400, 220, 60)];
     
     msgView.image=msgImg;
     
     [self.view addSubview:msgView];
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
-    animation.fromValue = [NSNumber numberWithFloat:1.0f];
-    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
-    animation.autoreverses = YES;
-    animation.duration = 1.0;
-    animation.repeatCount = MAXFLOAT;
-    animation.removedOnCompletion = NO;
-    animation.fillMode = kCAFillModeForwards;
-    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
+//    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
+//    animation.fromValue = [NSNumber numberWithFloat:1.0f];
+//    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
+//    animation.autoreverses = YES;
+//    animation.duration = 1.0;
+//    animation.repeatCount = MAXFLOAT;
+//    animation.removedOnCompletion = NO;
+//    animation.fillMode = kCAFillModeForwards;
+//    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
     
     
-    [msgView.layer addAnimation:animation forKey:@"opacity"];
+//    [msgView.layer addAnimation:animation forKey:@"opacity"];
     
     
-    [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(hidePic) userInfo:nil repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(hidePic) userInfo:nil repeats:NO];
     
 }
 

@@ -53,7 +53,7 @@ SysData initData;
         NSLog(@"%@",dbPath);
         db= [FMDatabase databaseWithPath:dbPath] ;
         if (![db open]) {
-            NSLog(@"Could not open db.");
+            //NSLog(@"Could not open db.");
             return ;
         }
         else{
@@ -63,20 +63,24 @@ SysData initData;
             if (![sharedDbManagerInstance isTableOK:@"url" DbName:db]) {
                 
                 [db executeUpdate:@"CREATE TABLE url (id text, url text,url_txt text,hits integer,px integer)"];
-                [db executeUpdate:@"INSERT INTO url (id,url,url_txt) VALUES (?,?,?)",@"1",@"http://www.sohu.com",@"sohu",1,1] ;
-                [db executeUpdate:@"INSERT INTO url (id,url,url_txt) VALUES (?,?,?)",@"2",@"http://www.sina.cn",@"sina",1,2] ;
+                [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,1)",@"1",@"http://www.sohu.com",@"搜狐"] ;
+                [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,2)",@"2",@"http://www.sina.cn",@"新浪"] ;
                 
-                [db executeUpdate:@"INSERT INTO url (id,url,url_txt) VALUES (?,?,?)",@"3",@"http://www.baidu.com",@"百度",1,3] ;
+                [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,3)",@"3",@"https://m.baidu.com",@"百度"] ;
+                [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,4)",@"4",@"http://www.weibo.com",@"新浪微博"] ;
+                [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,5)",@"5",@"http://info.3g.qq.com",@"腾讯"] ;
+                
+                [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,6)",@"6",@"http://3g.163.com",@"网易"] ;
             }
             
           if (![sharedDbManagerInstance isTableOK:@"person_url" DbName:db]) {
                 [db executeUpdate:@"CREATE TABLE person_url (id text, url text,url_txt text,hits integer,px integer)"];
-                [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt) VALUES (?,?,?)",@"1",@"http://10.229.128.25:8080/mis",@"MIS",1,1] ;
-                [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt) VALUES (?,?,?)",@"2",@"http://10.229.128.8",@"公司主页",1,2] ;
-                [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt) VALUES (?,?,?)",@"3",@"http://portalwg.shenhua.cc/oimdiy/login.jsp?appname=webcenter",@"邮箱",1,3] ;
+                [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt,hits,px) VALUES (?,?,?,1,1)",@"1",@"http://10.229.128.25:8080/mis",@"MIS"] ;
+                [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt,hits,px) VALUES (?,?,?,1,2)",@"2",@"http://10.229.128.8",@"公司主页"] ;
+                [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt,hits,px) VALUES (?,?,?,1,3)",@"3",@"http://portalwg.shenhua.cc/oimdiy/login.jsp?appname=webcenter",@"邮箱"] ;
                 
                 
-                [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt) VALUES (?,?,?)",@"3",@"http://www.shenhuagroup.com.cn",@"集团",1,4] ;
+                [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt,hits,px) VALUES (?,?,?,1,4)",@"4",@"http://www.shenhuagroup.com.cn",@"集团"] ;
 
                 
             }

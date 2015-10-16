@@ -11,6 +11,6 @@
 
 @interface AddSiteViewController : UIViewController<DataValues>
 -(void)SetIndex:(int)i;
--(BOOL)checkURL : (NSString *) url;
+
 @property (nonatomic,retain)id <DataValues> delegate;
 @end

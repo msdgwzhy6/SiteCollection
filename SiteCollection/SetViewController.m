@@ -30,14 +30,14 @@
 - (void)viewDidLoad {
     [super viewDidLoad];
     // Do any additional setup after loading the view.
-    UITableView *myTableView =  [[UITableView alloc]initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y+20, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStyleGrouped];
+    UITableView *myTableView =  [[UITableView alloc]initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y+2, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStyleGrouped];
     myTableView.delegate=self;
     myTableView.dataSource=self;
     
     [self.view addSubview:myTableView];
-    myTableView.scrollEnabled=NO;
+    //myTableView.scrollEnabled=NO;
     self.navigationItem.title=@"设置";
-
+    
 }
 
 
@@ -75,7 +75,7 @@
                 reuseIdentifier:CellIdentifier] ;
     }
     
-   // FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
+    // FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
     initValues =[[SharedDataBaseManager sharedManager]returnInitValues];
     
     //NSLog(@"font_size = %f",initValues.font_size);
@@ -172,18 +172,18 @@
             
             //            cell.imageView.image=[UIImage imageNamed:@"health_data_600.png"];
         }
-
         
-       // cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
+        
+        // cell.accessoryType=UITableViewCellAccessoryDisclosureIndicator;
     }
     
     
-       if (indexPath.section==1) {
-    
-            cell.textLabel.text=@"还原初始数据";
-    
-    
-       }
+    if (indexPath.section==1) {
+        
+        cell.textLabel.text=@"还原初始数据";
+        
+        
+    }
     
     
     
@@ -201,7 +201,7 @@
     FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
     
     [db executeUpdate:@"UPDATE sys_values SET FONT_SIZE=?",str] ;
-
+    
 }
 -(void)rowHeightChanged{
     initValues.row_height=[rowHeight value];
@@ -218,7 +218,7 @@
     
     FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
     NSString * sON=@"0";
-
+    
     if(YES==open_switch.on)
     {
         sON=@"1";
@@ -247,7 +247,7 @@
         initValues.sort_status=0;
         [db executeUpdate:@"UPDATE sys_values SET sort_status=?",sON] ;
     }
-
+    
 }
 
 -(void)show_switch_changed{
@@ -275,11 +275,11 @@
 {
     if (indexPath.section==1) {
         
-        UIAlertView *alertA= [[UIAlertView alloc] initWithTitle:@"提示" message:@"是否要还原初始化数据？" delegate:self cancelButtonTitle:@"确定" otherButtonTitles: nil];
+        UIAlertView *alertA= [[UIAlertView alloc] initWithTitle:@"提示" message:@"是否要还原初始化数据？" delegate:self cancelButtonTitle:@"是" otherButtonTitles: nil];
         //objectiveC开发中调用方法是用"[]" 例如: [alertA addButtonWithTitle:@"取消"];
         //如果是为方法赋值则类似java 对象.成员 例如 :textFieldA.text
         //添加了一个取消按钮
-        [alertA addButtonWithTitle:@"取消"];
+        [alertA addButtonWithTitle:@"否"];
         //将这个UIAlerView 显示出来
         [alertA show];
         //objective-C 不像java 有自己的垃圾回收机制 所以我们在编写程序中一定要注意释放内存 从一开始就养成良好习惯
@@ -289,32 +289,37 @@
 }
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
- {
-    NSString* msg = [[NSString alloc] initWithFormat:@"您按下的第%d个按钮！",(int)buttonIndex];
-    NSLog(@"%@",msg);
-     if (0==buttonIndex) {
-         
-     
-     FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
+{
+    //NSString* msg = [[NSString alloc] initWithFormat:@"您按下的第%d个按钮！",(int)buttonIndex];
+    //NSLog(@"%@",msg);
+    if (0==buttonIndex) {
         
+        
+        FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
+        
+        
+        [db executeUpdate:@"DELETE FROM URL "] ;
+        [db executeUpdate:@"DELETE FROM PERSON_URL "] ;
+        
+        [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,1)",@"1",@"http://www.sohu.com",@"搜狐"] ;
+        [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,2)",@"2",@"http://www.sina.cn",@"新浪"] ;
+        
+        [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,3)",@"3",@"https://m.baidu.com",@"百度"] ;
+        [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,4)",@"4",@"http://www.weibo.com",@"新浪微博"] ;
+        [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,5)",@"5",@"http://info.3g.qq.com",@"腾讯"] ;
+        
+        [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,6)",@"6",@"http://3g.163.com",@"网易"] ;
+        
+        
+        [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt,hits,px) VALUES (?,?,?,1,1)",@"1",@"http://10.229.128.25:8080/mis",@"MIS"] ;
+        [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt,hits,px) VALUES (?,?,?,1,2)",@"2",@"http://10.229.128.8",@"公司主页"] ;
+        [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt,hits,px) VALUES (?,?,?,1,3)",@"3",@"http://portalwg.shenhua.cc/oimdiy/login.jsp?appname=webcenter",@"邮箱"] ;
+        
+        
+        [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt,hits,px) VALUES (?,?,?,1,4)",@"4",@"http://www.shenhuagroup.com.cn",@"集团"] ;
+        
+    }
     
-      [db executeUpdate:@"DELETE FROM URL "] ;
-      [db executeUpdate:@"DELETE FROM PERSON_URL "] ;
-
-     [db executeUpdate:@"INSERT INTO url (id,url,url_txt) VALUES (?,?,?)",@"1",@"http://www.sohu.com",@"sohu",1,1] ;
-     [db executeUpdate:@"INSERT INTO url (id,url,url_txt) VALUES (?,?,?)",@"2",@"http://www.sina.cn",@"sina",1,2] ;
-     
-     [db executeUpdate:@"INSERT INTO url (id,url,url_txt) VALUES (?,?,?)",@"3",@"http://www.baidu.com",@"百度",1,3] ;
-     
-     [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt) VALUES (?,?,?)",@"1",@"http://10.229.128.25:8080/mis",@"MIS",1,1] ;
-     [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt) VALUES (?,?,?)",@"2",@"http://10.229.128.8",@"公司主页",1,2] ;
-     [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt) VALUES (?,?,?)",@"3",@"http://portalwg.shenhua.cc/oimdiy/login.jsp?appname=webcenter",@"邮箱",1,3] ;
-     
-     
-     [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt) VALUES (?,?,?)",@"3",@"http://www.shenhuagroup.com.cn",@"集团",1,4] ;
-     
-     }
-     
 }
 
 //设置行高
@@ -332,16 +337,16 @@
 {
     if (section==0) {
         return @"";
-   }
-    return @"还原热门网址和个人收藏初始数据";
+    }
+    return @"还原热门网址和个人收藏初始数据，重启后生效。";
     
 }
 
 //设置节段注头
 -(NSString * )tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section
 {
-        if (section==0) {
-            return @"全局参数";
+    if (section==0) {
+        return @"全局参数";
     }
     return @"还原";
 }
@@ -354,13 +359,13 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

@@ -58,9 +58,44 @@
     txtUrl.backgroundColor=urlColor;
     [self.view addSubview:txtUrl];
     
+    UILabel * msgLabel=[[UILabel alloc]initWithFrame:CGRectMake((bounds.size.width-250)/2, 300, 250, 26)];
+    
+    [msgLabel setText:@"注：网址须是以http(s)://开头"];
+    [self.view addSubview:msgLabel];
+    
+    
+    msgView =[[UIImageView alloc]initWithFrame:CGRectMake((bounds.size.width-bounds.origin.x)/2-110, 250, 215, 35)];
+    
     
     
 }
+
+#pragma 正则匹配URL
+-(BOOL)checkURL : (NSString *) url
+{
+    //@"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"; 邮箱
+    //@"^1[3,5,8][0-9]{9}$";  手机号
+    //@"http+:[^\\s]*";   OR [a-zA-z]+://[^\s]*
+    NSString *pattern = @"http(s)?+://[^\\s]*[\\.][^\\s]*";
+    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", pattern];
+    BOOL isMatch = [pred evaluateWithObject:url];
+    return isMatch;
+    
+}
+
+#pragma 是否为空
+-(BOOL)checkTxt:(NSString *)txt{
+    
+    if ([[txt stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]] length]==0) {
+        
+        return YES;
+        
+    }
+    
+    return NO;
+}
+
+
 -(void)SetIndex:(int) i
 {
     index=i;
@@ -77,9 +112,18 @@
 //        NSLog(@"URL is not OK");
 //       
 //   }
+    
+    if ([self checkTxt:[txtTitle text]]) {
+        [self loadMsgImg:@"alterTxt@2x"];
+        //NSLog(@"TXT IS  NULL");
+        return ;
+    }
+//    else{
+//        NSLog(@"TXT IS NOT NULL");
+//    }
 
     if ([self checkURL:[txtUrl text]]) {
-       NSLog(@"URL OK");
+       //NSLog(@"URL OK");
         
         [self dismissViewControllerAnimated:YES completion:^{
             //NSLog(@"Save Data");
@@ -101,38 +145,36 @@
     
 
 }
--(void)reLoadData{
-    NSLog(@"AddSiteViewController");
-}
 
+//取消按钮事件
 -(void)CancelData{
     [self dismissViewControllerAnimated:YES completion:nil];
 
 }
 
 -(void)loadMsgImg:(NSString * )imgName {
-    CGRect bounds = self.view.bounds;
+    //CGRect bounds = self.view.bounds;
     UIImage * msgImg =[UIImage imageNamed:imgName];
-    msgView =[[UIImageView alloc]initWithFrame:CGRectMake((bounds.size.width-bounds.origin.x)/2-110, 500, 215, 35)];
+    
     
     msgView.image=msgImg;
     
     [self.view addSubview:msgView];
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
-    animation.fromValue = [NSNumber numberWithFloat:1.0f];
-    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
-    animation.autoreverses = YES;
-    animation.duration = 1.0;
-    animation.repeatCount = MAXFLOAT;
-    animation.removedOnCompletion = NO;
-    animation.fillMode = kCAFillModeForwards;
-    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
+//    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
+//    animation.fromValue = [NSNumber numberWithFloat:1.0f];
+//    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
+//    animation.autoreverses = YES;
+//    animation.duration = 1.0;
+//    animation.repeatCount = MAXFLOAT;
+//    animation.removedOnCompletion = NO;
+//    animation.fillMode = kCAFillModeForwards;
+//    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
+//    
+//    
+//    [msgView.layer addAnimation:animation forKey:@"opacity"];
     
     
-    [msgView.layer addAnimation:animation forKey:@"opacity"];
-    
-    
-    [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(hidePic) userInfo:nil repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(hidePic) userInfo:nil repeats:NO];
     
 }
 
@@ -144,18 +186,7 @@
 }
 
 
-#pragma 正则匹配URL
--(BOOL)checkURL : (NSString *) url
-{
-    //@"[A-Z0-9a-z._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}"; 邮箱
-    //@"^1[3,5,8][0-9]{9}$";  手机号
-    //@"http+:[^\\s]*";   OR [a-zA-z]+://[^\s]*
-    NSString *pattern = @"http(s)?+://[^\\s]*[\\.][^\\s]*";
-    NSPredicate *pred = [NSPredicate predicateWithFormat:@"SELF MATCHES %@", pattern];
-    BOOL isMatch = [pred evaluateWithObject:url];
-    return isMatch;
-    
-}
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.

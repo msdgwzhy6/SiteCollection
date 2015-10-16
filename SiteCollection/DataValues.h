@@ -9,5 +9,6 @@
 #import <Foundation/Foundation.h>
 
 @protocol DataValues <NSObject>
+@optional
 -(void)reLoadData;
 @end

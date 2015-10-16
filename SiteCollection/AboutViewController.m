@@ -18,7 +18,7 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     self.view.backgroundColor=[UIColor whiteColor];
-    UITableView *myTableView =  [[UITableView alloc]initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y+20, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStyleGrouped];
+    UITableView *myTableView =  [[UITableView alloc]initWithFrame:CGRectMake(self.view.frame.origin.x, self.view.frame.origin.y+5, self.view.frame.size.width, self.view.frame.size.height) style:UITableViewStyleGrouped];
     myTableView.delegate=self;
     myTableView.dataSource=self;
     

@@ -37,11 +37,11 @@
     titleArray =[NSMutableArray array];
     idArray  =[NSMutableArray array];
     urlArray   =[NSMutableArray array];
-
-//    UINavigationBar *bar = [self.navigationController navigationBar];
-//    CGFloat navBarHeight = 35.0f;
-//    CGRect frame = CGRectMake(0.0f, 20.0f, 320.0f, navBarHeight);
-//    [bar setFrame:frame];
+    
+    //    UINavigationBar *bar = [self.navigationController navigationBar];
+    //    CGFloat navBarHeight = 35.0f;
+    //    CGRect frame = CGRectMake(0.0f, 20.0f, 320.0f, navBarHeight);
+    //    [bar setFrame:frame];
     
     self.navigationItem.title=@"热门网址";
     
@@ -51,6 +51,8 @@
     self.tableView.dataSource=self;
     self.tableView.delegate=self;
     [self loadData];
+    
+    msgView =[[UIImageView alloc]initWithFrame:CGRectMake((bounds.size.width-bounds.origin.x)/2-110, 200, 220, 60)];
 }
 
 
@@ -58,11 +60,11 @@
 // 控制器即将显示的时候调用
 - (void)viewWillAppear:(BOOL)animated
 {
-        [super viewWillAppear:YES];
-        //NSLog(@"%@ -  控制器即将显示", [self class]);
-        initValues =[[SharedDataBaseManager sharedManager]returnInitValues];
-        [self.tableView reloadData];
-
+    [super viewWillAppear:YES];
+    //NSLog(@"%@ -  控制器即将显示", [self class]);
+    initValues =[[SharedDataBaseManager sharedManager]returnInitValues];
+    [self.tableView reloadData];
+    
 }
 
 // 控制器完全显示的时候调用
@@ -108,11 +110,11 @@
         [urlArray addObject:[rs stringForColumn:@"url"]];
         
         [idArray addObject:[rs stringForColumn:@"id"]];
-
+        
         
         
     }
-
+    
     
 }
 
@@ -132,7 +134,7 @@
 }
 
 -(void)editData{
-    NSLog(@"edit data...");
+    //NSLog(@"edit data...");
     [self.tableView setEditing:YES animated:YES];
 }
 
@@ -186,7 +188,7 @@
         //        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
         //                         withRowAnimation:UITableViewRowAnimationAutomatic];
         
-        NSLog(@"DELETE DATA");
+        //NSLog(@"DELETE DATA");
         [titleArray removeObjectAtIndex:indexPath.row];
         [idArray removeObjectAtIndex:indexPath.row];
         [urlArray removeObjectAtIndex:indexPath.row];
@@ -205,11 +207,11 @@
     NSUInteger row = [indexPath row];
     cell.textLabel.text = [titleArray objectAtIndex:row];
     if(1==initValues.show_status){
-      cell.detailTextLabel.text=[urlArray objectAtIndex:row];
+        cell.detailTextLabel.text=[urlArray objectAtIndex:row];
     }
     else{
         cell.detailTextLabel.text=@"";
-
+        
     }
     UIFont *newFont = [UIFont fontWithName:@"Arial" size:initValues.font_size];
     //创建完字体格式之后就告诉cell
@@ -223,28 +225,28 @@
 }
 
 -(void)loadMsgImg:(NSString * )imgName {
-    CGRect bounds = self.view.bounds;
+    //CGRect bounds = self.view.bounds;
     UIImage * msgImg =[UIImage imageNamed:imgName];
-    msgView =[[UIImageView alloc]initWithFrame:CGRectMake((bounds.size.width-bounds.origin.x)/2-110, 400, 220, 60)];
+    
     
     msgView.image=msgImg;
     
     [self.view addSubview:msgView];
-    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
-    animation.fromValue = [NSNumber numberWithFloat:1.0f];
-    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
-    animation.autoreverses = YES;
-    animation.duration = 1.0;
-    animation.repeatCount = MAXFLOAT;
-    animation.removedOnCompletion = NO;
-    animation.fillMode = kCAFillModeForwards;
-    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
+//    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
+//    animation.fromValue = [NSNumber numberWithFloat:1.0f];
+//    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
+//    animation.autoreverses = YES;
+//    animation.duration = 1.0;
+//    animation.repeatCount = MAXFLOAT;
+//    animation.removedOnCompletion = NO;
+//    animation.fillMode = kCAFillModeForwards;
+//    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
+//    
+//    
+//    [msgView.layer addAnimation:animation forKey:@"opacity"];
     
     
-    [msgView.layer addAnimation:animation forKey:@"opacity"];
-    
-    
-    [NSTimer scheduledTimerWithTimeInterval:2.0 target:self selector:@selector(hidePic) userInfo:nil repeats:NO];
+    [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(hidePic) userInfo:nil repeats:NO];
     
 }
 
@@ -279,14 +281,14 @@
                 
                 if (initValues.open_stuts==1) {
                     
-                   //safari
-                   NSURL* MISurl = [[ NSURL alloc ] initWithString :[urlArray objectAtIndex:indexPath.row] ];
-                
-                    [self UpdateHits:[idArray objectAtIndex:indexPath.row]:@"URL" ];
-
-                   
+                    //safari
+                    NSURL* MISurl = [[ NSURL alloc ] initWithString :[urlArray objectAtIndex:indexPath.row] ];
                     
-                   [[UIApplication sharedApplication ] openURL:MISurl];
+                    [self UpdateHits:[idArray objectAtIndex:indexPath.row]:@"URL" ];
+                    
+                    
+                    
+                    [[UIApplication sharedApplication ] openURL:MISurl];
                     
                 }
                 else{
@@ -306,7 +308,7 @@
                         
                         [self UpdateHits:[idArray objectAtIndex:indexPath.row]:@"URL" ];
                     }];
-
+                    
                 }
             }
             
@@ -319,15 +321,11 @@
     }
 }
 -(void)UpdateHits:(NSString *) indexID :(NSString * )tableName {
+    
+    
     FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
-    NSString * SQL = [NSString stringWithFormat:@"SELECT HITS FROM %@ WHERE ID=? ",tableName];
-    int iHits=1;
-    FMResultSet *rs=[db executeQuery:SQL,indexID ];
-    while ([rs next]){
-        iHits =[rs intForColumn:@"HITS"]+1;
-    }
-    SQL = [NSString stringWithFormat:@"UPDATE %@ SET HITS=%d WHERE ID=?",tableName,iHits];
-    [db executeUpdate:SQL,indexID] ;
+    
+    [db executeUpdate:@"UPDATE URL SET HITS=HITS+1 WHERE ID=?",indexID] ;
 }
 
 - (void)didReceiveMemoryWarning {
@@ -336,13 +334,13 @@
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

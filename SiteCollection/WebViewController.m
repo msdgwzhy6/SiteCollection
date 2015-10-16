@@ -9,6 +9,9 @@
 #import "WebViewController.h"
 
 @interface WebViewController ()
+{
+    UIActivityIndicatorView *acView;
+}
 @property (nonatomic,strong)NSString * webURL;
 @property (nonatomic,strong)UIWebView *webView;
 @end
@@ -19,27 +22,49 @@
     [super viewDidLoad];
     // Do any additional setup after loading the view.
     CGRect bounds = self.view.frame;  //获取界面区域
+    
+    
+    
+    
+    
+    
+    
+    
     self.webView =[[UIWebView alloc]initWithFrame:CGRectMake(bounds.origin.x, bounds.origin.y, bounds.size.width, bounds.size.height)];
     
     self.webView.delegate=self;
     [self.view addSubview:self.webView];
     
     
+    acView =[[UIActivityIndicatorView alloc]initWithFrame:CGRectMake((bounds.size.height-120)/2, (bounds.size.width-120)/2,120, 120)];
     
-    //    NSString *filePath = [[NSBundle mainBundle]pathForResource:@"www.sohu.com" ofType:@"html"];
-    //    NSString *htmlString = [NSString stringWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-    //    [webView loadHTMLString:htmlString baseURL:[NSURL URLWithString:filePath]];
+    [acView setCenter:CGPointMake(160, 140)];//指定进度轮中心点
     
+    [acView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleWhiteLarge];//设置进度轮显示类型
+    //acView.backgroundColor =[UIColor blackColor];
+    [acView setCenter:self.view.center];
+    [acView setActivityIndicatorViewStyle:UIActivityIndicatorViewStyleGray];
     
-    //[barBtn setTitle:@"取消"];
+    [self.view addSubview:acView];
+    [acView startAnimating];
+
     
+       
     
     [self.webView setScalesPageToFit:YES];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:_webURL]];
     [self.webView loadRequest:request];
     UIBarButtonItem * barBtn = [[UIBarButtonItem alloc]initWithTitle:@"返回" style:UIBarButtonItemStylePlain target:self action:@selector(btn_click)];
     self.navigationItem.leftBarButtonItem=barBtn;
+    
+    
+    
 
+}
+
+- (void)webViewDidFinishLoad:(UIWebView *)webView{
+    [acView stopAnimating];
+    //NSLog(@"Stop");
 }
 - (void)showViewUrlValue:(NSString *)url
 {
@@ -52,11 +77,7 @@
 
 -(void)btn_click
 {
-    [self dismissViewControllerAnimated:YES completion:^{
-        NSLog(@"dismiss finished");
-        
-        
-    }];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];

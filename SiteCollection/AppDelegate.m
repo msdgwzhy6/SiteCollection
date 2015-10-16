@@ -58,23 +58,7 @@
     
     self.window.rootViewController=rootBarControll;
     rootBarControll.delegate=self;
-//    
-//    FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
-//    
-//    
-//    NSString *sql=@"SELECT * FROM URL";
-//    
-//        sql=@"SELECT * FROM URL ORDER BY HITS DESC";
-//  
-//    
-//    FMResultSet *rs=[db executeQuery:sql];
-//    while ([rs next]){
-//        NSLog(@"%@ %@ hits =%d  ID = %@",[rs stringForColumn:@"url"],[rs stringForColumn:@"url_txt"],[rs intForColumn:@"hits"],[rs stringForColumn:@"ID"]);
-//        
-//        
-//        
-//        
-//    }
+
     
     return YES;
 }
