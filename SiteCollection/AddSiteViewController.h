@@ -11,6 +11,6 @@
 
 @interface AddSiteViewController : UIViewController<DataValues>
 -(void)SetIndex:(int)i;
-
+//代理
 @property (nonatomic,retain)id <DataValues> delegate;
 @end

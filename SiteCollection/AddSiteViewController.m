@@ -95,32 +95,20 @@
     return NO;
 }
 
-
+#pragma 传数组元素个数，用过ID + 1
 -(void)SetIndex:(int) i
 {
     index=i;
 }
 -(void)SaveData{
     
-//   if([Tools checkURL: [txtUrl text]])
-//   {
-//       
-//        NSLog(@"URL OK");
-//   }
-//   else
-//   {
-//        NSLog(@"URL is not OK");
-//       
-//   }
+
     
     if ([self checkTxt:[txtTitle text]]) {
         [self loadMsgImg:@"alterTxt@2x"];
         //NSLog(@"TXT IS  NULL");
         return ;
     }
-//    else{
-//        NSLog(@"TXT IS NOT NULL");
-//    }
 
     if ([self checkURL:[txtUrl text]]) {
        //NSLog(@"URL OK");
@@ -131,7 +119,7 @@
             FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
             
             [db executeUpdate:@"INSERT INTO person_url (id,url,url_txt) VALUES (?,?,?)",iCount,[txtUrl text],[txtTitle text],1,index+1] ;
-            //NSLog(@"delegate =%@",_delegate);
+            
             [_delegate reLoadData];
             
             

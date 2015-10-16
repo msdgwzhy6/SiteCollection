@@ -160,6 +160,7 @@
 
     return initValues.row_height;
 }
+#pragma 刷新表格数据，协议函数
 -(void)reLoadData{
     [self loadData];
     [self.MytableView reloadData];
@@ -177,8 +178,10 @@
     AddSiteViewController * addSiteVc = [[AddSiteViewController alloc]init];
     
     [addSiteVc SetIndex:(int)[urlArray count]];
+    
+    //代理，将PersonViewController传给addSiteVc 
     addSiteVc.delegate=self;
-    //NSLog(@"addSiteVc.delegate=self %@",self);
+   
     
     UINavigationController * addSiteNC =  [[UINavigationController alloc]initWithRootViewController:addSiteVc];
     addSiteNC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;

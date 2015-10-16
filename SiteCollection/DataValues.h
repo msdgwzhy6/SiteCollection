@@ -1,5 +1,6 @@
 //
 //  DataValues.h
+//  刷新表格数据协议
 //  SiteCollection
 //
 //  Created by WangZhengHong on 15/10/15.
@@ -10,5 +11,6 @@
 
 @protocol DataValues <NSObject>
 @optional
+#pragma 刷新表格数据
 -(void)reLoadData;
 @end
