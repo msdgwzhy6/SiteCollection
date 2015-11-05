@@ -10,4 +10,5 @@
 
 @interface WebViewController : UIViewController<UIWebViewDelegate>
 - (void)showViewUrlValue:(NSString *)url;
+-(void)AddBtnOfReturn;
 @end

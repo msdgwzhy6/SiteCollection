@@ -12,6 +12,7 @@
 #import "AFNetworking.h"
 #import "WebViewController.h"
 #import "AddSiteViewController.h"
+#import "TouchTableView.h"
 
 @interface PersonViewController ()
 {
@@ -24,10 +25,11 @@
     
     UIBarButtonItem *leftButton;
     UIBarButtonItem *rightButton;
-
-
+    NSString * url;
+    
+    
 }
-@property (nonatomic,strong) UITableView * MytableView;
+@property (nonatomic,strong) TouchTableView * MytableView;
 @end
 
 @implementation PersonViewController
@@ -45,10 +47,10 @@
     titleArray =[NSMutableArray array];
     idArray  =[NSMutableArray array];
     urlArray   =[NSMutableArray array];
-
+    
     self.navigationItem.title=@"个人收藏";
     
-    _MytableView =[[UITableView alloc]initWithFrame:CGRectMake(0, 0+20, bounds.size.width, bounds.size.height) style:UITableViewStylePlain];
+    _MytableView =[[TouchTableView alloc]initWithFrame:CGRectMake(0, 0+20, bounds.size.width, bounds.size.height) style:UITableViewStylePlain];
     
     [self.view addSubview:_MytableView];
     
@@ -61,29 +63,28 @@
     
     
     
-    //btnAdd =[[UIButton alloc]initWithFrame:CGRectMake(0, 0, 22, 22)];
- //   btnAdd =[UIButton buttonWithType:UIButtonTypeContactAdd];
-//   UIImage * img =[UIImage imageNamed:@"Add@2x"];
-//    btnAdd.imageView.image=img;
- //   [btnAdd addTarget:self action:@selector(addData) forControlEvents:UIControlEventTouchUpInside];
-//    UIBarButtonItem * barAddItem =[[UIBarButtonItem alloc]initWithCustomView:btnAdd];
-//    self.navigationItem.leftBarButtonItem=barAddItem;
-
+    
     leftButton = [[UIBarButtonItem alloc] initWithTitle:@"增加"
-                                                                    style:UIBarButtonItemStyleDone target:self action:@selector(addData)];
+                                                  style:UIBarButtonItemStyleDone target:self action:@selector(addData)];
     
     self.navigationItem.leftBarButtonItem=leftButton;
-
-
+    
+    
     
     rightButton = [[UIBarButtonItem alloc] initWithTitle:@"编辑"
-                                                                    style:UIBarButtonItemStyleDone target:self action:@selector(editData)];
+                                                   style:UIBarButtonItemStyleDone target:self action:@selector(editData)];
     
     self.navigationItem.rightBarButtonItem=rightButton;
     
     
     
     msgView =[[UIImageView alloc]initWithFrame:CGRectMake((bounds.size.width-bounds.origin.x)/2-110, 200, 220, 60)];
+    
+    
+    //9.0以下不执行
+    //if ([self respondsToSelector:@selector(registerForPreviewingWithDelegate:sourceView:)])
+    //    [self registerForPreviewingWithDelegate:self sourceView:self.view];
+    
     
 }
 
@@ -99,31 +100,6 @@
     
 }
 
-// 控制器完全显示的时候调用
-//- (void)viewDidAppear:(BOOL)animated
-//{
-//    [super viewDidAppear:animated];
-//    NSLog(@"%@ -  控制器完全显示", [self class]);
-//}
-
-// 控制器即将消失的时候调用
-//- (void)viewWillDisappear:(BOOL)animated
-//{
-//    [super viewWillDisappear:animated];
-//    NSLog(@"%@ -  控制器即将消失", [self class]);
-//}
-// 控制器完全消失的时候调用
-//- (void)viewDidDisappear:(BOOL)animated
-//{
-//    [super viewDidDisappear:animated];
-//    NSLog(@"%@ -  控制器完全消失", [self class]);
-//}
-//- (void)viewWillUnload
-//
-//{
-//    [super viewWillUnload];
-//    NSLog(@"%@ -  view即将被销毁", [self class]);
-//}
 -(void)loadData{
     
     FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
@@ -157,7 +133,7 @@
     if (initValues.row_height<=5) {
         return 30;
     }
-
+    
     return initValues.row_height;
 }
 #pragma 刷新表格数据，协议函数
@@ -166,33 +142,21 @@
     [self.MytableView reloadData];
 }
 -(void)addData{
- //   NSLog(@"addData...");
-    
-//    [titleArray addObject:@"apple.com"];
-//    [urlArray addObject:@"http://wwww.apple.com.cn"];
-//    
-//    [idArray addObject:@"4"];
-    
-    //[db executeUpdate:@"INSERT INTO url (id,url,url_txt) VALUES (?,?,?)",@"4",@"http://www.apple.com.cn",@"apple"] ;
     
     AddSiteViewController * addSiteVc = [[AddSiteViewController alloc]init];
     
     [addSiteVc SetIndex:(int)[urlArray count]];
     
-    //代理，将PersonViewController传给addSiteVc 
+    //代理，将PersonViewController传给addSiteVc
     addSiteVc.delegate=self;
-   
+    
     
     UINavigationController * addSiteNC =  [[UINavigationController alloc]initWithRootViewController:addSiteVc];
     addSiteNC.modalTransitionStyle = UIModalTransitionStyleFlipHorizontal;
     [self presentViewController:addSiteNC animated:YES completion:^{
         //NSLog(@"Read News....");
     }];
-   // [self presentModalViewController:addSiteNC animated:YES ];
-
     
-    //[self loadData];
-    //[self.MytableView reloadData];
     
 }
 
@@ -200,15 +164,15 @@
     FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
     
     [db executeUpdate:@"UPDATE PERSON_URL SET HITS=HITS+1 WHERE ID=?",indexID] ;
-
+    
 }
 
 -(void)editData{
     //NSLog(@"edit data...");
     if([rightButton.title isEqualToString:@"编辑"])
     {
-      [self.MytableView setEditing:YES animated:YES];
-       rightButton.title =@"完成";
+        [self.MytableView setEditing:YES animated:YES];
+        rightButton.title =@"完成";
     }
     else{
         [self.MytableView setEditing:NO animated:YES];
@@ -262,12 +226,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:
 (UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        //NSUInteger *row = [indexPath row];
-        //[self.list removeObjectAtIndex:row];
-        //        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
-        //                         withRowAnimation:UITableViewRowAnimationAutomatic];
         
-       // NSLog(@"DELETE DATA");
         FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
         
         [db executeUpdate:@"DELETE FROM PERSON_URL WHERE ID=?",[idArray objectAtIndex:indexPath.row]] ;
@@ -275,12 +234,12 @@
         [idArray removeObjectAtIndex:indexPath.row];
         [urlArray removeObjectAtIndex:indexPath.row];
         
-
+        
         [self.MytableView reloadData];
     }
-//    if (editingStyle== UITableViewCellEditingStyleNone) {
-//        NSLog(@"edit row = %ld",indexPath.row);
-//    }
+    //    if (editingStyle== UITableViewCellEditingStyleNone) {
+    //        NSLog(@"edit row = %ld",indexPath.row);
+    //    }
 }
 
 
@@ -299,13 +258,13 @@ sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
     object = [idArray objectAtIndex:fromRow];
     [idArray removeObjectAtIndex:fromRow];
     [idArray insertObject:object atIndex:toRow];
-
+    
     
     
     object = [urlArray objectAtIndex:fromRow];
     [urlArray removeObjectAtIndex:fromRow];
     [urlArray insertObject:object atIndex:toRow];
-
+    
     
     
     
@@ -347,18 +306,18 @@ sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
     msgView.image=msgImg;
     
     [self.view addSubview:msgView];
-//    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
-//    animation.fromValue = [NSNumber numberWithFloat:1.0f];
-//    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
-//    animation.autoreverses = YES;
-//    animation.duration = 1.0;
-//    animation.repeatCount = MAXFLOAT;
-//    animation.removedOnCompletion = NO;
-//    animation.fillMode = kCAFillModeForwards;
-//    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
+    //    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
+    //    animation.fromValue = [NSNumber numberWithFloat:1.0f];
+    //    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
+    //    animation.autoreverses = YES;
+    //    animation.duration = 1.0;
+    //    animation.repeatCount = MAXFLOAT;
+    //    animation.removedOnCompletion = NO;
+    //    animation.fillMode = kCAFillModeForwards;
+    //    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
     
     
-//    [msgView.layer addAnimation:animation forKey:@"opacity"];
+    //    [msgView.layer addAnimation:animation forKey:@"opacity"];
     
     
     [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(hidePic) userInfo:nil repeats:NO];
@@ -399,8 +358,8 @@ sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
                     //safari
                     NSURL* MISurl = [[ NSURL alloc ] initWithString :[urlArray objectAtIndex:indexPath.row] ];
                     [self UpdateHits:[idArray objectAtIndex:indexPath.row]:@"PERSON_URL" ];
-
-
+                    
+                    
                     [[UIApplication sharedApplication ] openURL:MISurl];
                     
                 }
@@ -410,7 +369,7 @@ sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
                     // NSLog(@"%@",baseURL);
                     
                     WebViewController * newsWeb = [[WebViewController alloc]init];
-                    
+                    [newsWeb AddBtnOfReturn];
                     
                     [newsWeb showViewUrlValue:[urlArray objectAtIndex:indexPath.row]];
                     
@@ -419,7 +378,7 @@ sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
                     [self presentViewController:webNC animated:YES completion:^{
                         //NSLog(@"Read News....");
                         [self UpdateHits:[idArray objectAtIndex:indexPath.row]:@"PERSON_URL"];
-
+                        
                     }];
                     
                 }
@@ -434,19 +393,55 @@ sourceIndexPath toIndexPath:(NSIndexPath *)destinationIndexPath {
     }
 }
 
+//- (UIViewController *)previewingContext:(id<UIViewControllerPreviewing>)context viewControllerForLocation:(CGPoint) point
+//{
+//    
+//    
+//    
+//    
+//    
+//    NSIndexPath * urlIndex =[_MytableView getTableViewCellindexPath];
+//    if (urlIndex == nil) {
+//        url=[urlArray objectAtIndex:0];
+//    }else{
+//        url=[urlArray objectAtIndex:urlIndex.row];
+//    }
+//
+//    
+//    
+//    
+//    //存在的问题，长按cell时，如沿cell上部可准确取出URL,如沿cell下部则取出下一行cell值
+//    
+//    //NSLog(@"urlIndex.row= %d",(int)urlIndex.row);
+//    WebViewController * personWeb = [[WebViewController alloc]init];
+//    personWeb.preferredContentSize = CGSizeMake(0.0f,300.0f);
+//    
+//    [personWeb showViewUrlValue:url];
+//    CGRect rect = CGRectMake(0, point.y -10, self.view.frame.size.width - 20,20);
+//    context.sourceRect = rect;
+//    
+//    return personWeb;
+//    
+//}
+//- (void)previewContext:(id<UIViewControllerPreviewing>)context commitViewController:(UIViewController*)vc
+//{
+//    [self showViewController:vc sender:self];
+//}
+
+
 - (void)didReceiveMemoryWarning {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
 
 /*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
-}
-*/
+ #pragma mark - Navigation
+ 
+ // In a storyboard-based application, you will often want to do a little preparation before navigation
+ - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender {
+ // Get the new view controller using [segue destinationViewController].
+ // Pass the selected object to the new view controller.
+ }
+ */
 
 @end

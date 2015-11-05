@@ -11,6 +11,7 @@
 #import "FMDB.h"
 #import "AFNetworking.h"
 #import "WebViewController.h"
+#import "TouchTableView.h"
 @interface RootViewController ()
 {
     NSMutableArray *titleArray;//标题
@@ -19,9 +20,10 @@
     
     UIImageView * msgView ;
     SysData initValues;
+    NSString * url;
 }
 
-@property (nonatomic,strong) UITableView * tableView;
+@property (nonatomic,strong) TouchTableView * tableView;
 
 @end
 
@@ -38,14 +40,10 @@
     idArray  =[NSMutableArray array];
     urlArray   =[NSMutableArray array];
     
-    //    UINavigationBar *bar = [self.navigationController navigationBar];
-    //    CGFloat navBarHeight = 35.0f;
-    //    CGRect frame = CGRectMake(0.0f, 20.0f, 320.0f, navBarHeight);
-    //    [bar setFrame:frame];
     
     self.navigationItem.title=@"热门网址";
     
-    self.tableView =[[UITableView alloc]initWithFrame:CGRectMake(0, 0+20, bounds.size.width, bounds.size.height) style:UITableViewStylePlain];
+    self.tableView =[[TouchTableView alloc]initWithFrame:CGRectMake(0, 0+20, bounds.size.width, bounds.size.height) style:UITableViewStylePlain];
     
     [self.view addSubview:self.tableView];
     self.tableView.dataSource=self;
@@ -53,7 +51,36 @@
     [self loadData];
     
     msgView =[[UIImageView alloc]initWithFrame:CGRectMake((bounds.size.width-bounds.origin.x)/2-110, 200, 220, 60)];
+    
+    //9.0以下不执行
+    if ([self respondsToSelector:@selector(registerForPreviewingWithDelegate:sourceView:)])
+       [self registerForPreviewingWithDelegate:self sourceView:self.view];
+    
+    
+    
+    //给cell加长按手势
+//    UILongPressGestureRecognizer *gestureLongPress = [[UILongPressGestureRecognizer alloc]initWithTarget:self action:@selector(gestureLongPress:)];
+//    gestureLongPress.minimumPressDuration =0.2;
+//    [self.tableView addGestureRecognizer:gestureLongPress];
+    
+    
+    
 }
+
+//- (void)gestureLongPress:(UILongPressGestureRecognizer *)gestureRecognizer
+//{
+//    CGPoint tmpPointTouch = [gestureRecognizer locationInView:self.tableView];
+//    if (gestureRecognizer.state ==UIGestureRecognizerStateBegan) {
+//        NSIndexPath *indexPath = [self.tableView indexPathForRowAtPoint:tmpPointTouch];
+//        if (indexPath == nil) {
+//            NSLog(@"not tableView");
+//        }else{
+//            NSLog(@"%ld",[indexPath row]);
+//            
+//            
+//        }
+//    }
+//}
 
 
 
@@ -183,12 +210,7 @@
 - (void)tableView:(UITableView *)tableView commitEditingStyle:
 (UITableViewCellEditingStyle)editingStyle forRowAtIndexPath:(NSIndexPath *)indexPath {
     if (editingStyle == UITableViewCellEditingStyleDelete) {
-        //NSUInteger *row = [indexPath row];
-        //[self.list removeObjectAtIndex:row];
-        //        [tableView deleteRowsAtIndexPaths:[NSArray arrayWithObject:indexPath]
-        //                         withRowAnimation:UITableViewRowAnimationAutomatic];
         
-        //NSLog(@"DELETE DATA");
         [titleArray removeObjectAtIndex:indexPath.row];
         [idArray removeObjectAtIndex:indexPath.row];
         [urlArray removeObjectAtIndex:indexPath.row];
@@ -232,18 +254,6 @@
     msgView.image=msgImg;
     
     [self.view addSubview:msgView];
-//    CABasicAnimation *animation = [CABasicAnimation animationWithKeyPath:@"opacity"];//必须写opacity才行。
-//    animation.fromValue = [NSNumber numberWithFloat:1.0f];
-//    animation.toValue = [NSNumber numberWithFloat:0.0f];//这是透明度。
-//    animation.autoreverses = YES;
-//    animation.duration = 1.0;
-//    animation.repeatCount = MAXFLOAT;
-//    animation.removedOnCompletion = NO;
-//    animation.fillMode = kCAFillModeForwards;
-//    animation.timingFunction=[CAMediaTimingFunction functionWithName:kCAMediaTimingFunctionEaseIn];///没有的话是均匀的动画。
-//    
-//    
-//    [msgView.layer addAnimation:animation forKey:@"opacity"];
     
     
     [NSTimer scheduledTimerWithTimeInterval:1.0 target:self selector:@selector(hidePic) userInfo:nil repeats:NO];
@@ -261,6 +271,11 @@
 //选择行
 -(void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath
 {
+    
+    
+    
+
+   
     if (indexPath.section==0) {
         
         // 如果要检测网络状态的变化,必须用检测管理器的单例的startMonitoring
@@ -298,8 +313,8 @@
                     
                     WebViewController * newsWeb = [[WebViewController alloc]init];
                     
-                    
                     [newsWeb showViewUrlValue:[urlArray objectAtIndex:indexPath.row]];
+                    [newsWeb AddBtnOfReturn];
                     
                     UINavigationController * webNC =  [[UINavigationController alloc]initWithRootViewController:newsWeb];
                     
@@ -326,6 +341,45 @@
     FMDatabase *db=[[SharedDataBaseManager sharedManager] returnShareDb];
     
     [db executeUpdate:@"UPDATE URL SET HITS=HITS+1 WHERE ID=?",indexID] ;
+}
+
+- (UIViewController *)previewingContext:(id<UIViewControllerPreviewing>)context viewControllerForLocation:(CGPoint) point
+{
+    
+    
+    
+//    CGPoint point2 = [_tableView contentOffset];
+//    CGPoint  p=point ;
+//    p.x=point2.x+point.x;
+//    p.y=point2.y+point.y;
+//    
+//    
+//    NSIndexPath * urlIndex=[_tableView indexPathForRowAtPoint:p];
+    
+    NSIndexPath * urlIndex =[_tableView getTableViewCellindexPath];
+    if (urlIndex == nil) {
+      url=[urlArray objectAtIndex:0];
+    }else{
+      url=[urlArray objectAtIndex:urlIndex.row];
+    }
+        
+    
+    //存在的问题，长按cell时，如沿cell上部可准确取出URL,如沿cell下部则取出下一行cell值
+    
+    
+    WebViewController * newsWeb = [[WebViewController alloc]init];
+    newsWeb.preferredContentSize = CGSizeMake(0.0f,300.0f);
+    
+    [newsWeb showViewUrlValue:url];
+    CGRect rect = CGRectMake(0, point.y -10, self.view.frame.size.width - 20,20);
+    context.sourceRect = rect;
+    
+    return newsWeb;
+    
+}
+- (void)previewContext:(id<UIViewControllerPreviewing>)context commitViewController:(UIViewController*)vc
+{
+    [self showViewController:vc sender:self];
 }
 
 - (void)didReceiveMemoryWarning {

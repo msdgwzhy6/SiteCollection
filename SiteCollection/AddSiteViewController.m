@@ -20,6 +20,7 @@
     int index;
     
     UIImageView * msgView ;
+    UISwitch * add_switch;
 
 }
 
@@ -66,7 +67,8 @@
     
     msgView =[[UIImageView alloc]initWithFrame:CGRectMake((bounds.size.width-bounds.origin.x)/2-110, 250, 215, 35)];
     
-    
+    add_switch = [[UISwitch alloc]initWithFrame:CGRectMake((bounds.size.width-50)/2, 360, 50, 26)];
+    [self.view addSubview:add_switch];
     
 }
 

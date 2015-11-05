@@ -71,6 +71,12 @@ SysData initData;
                 [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,5)",@"5",@"http://info.3g.qq.com",@"腾讯"] ;
                 
                 [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,6)",@"6",@"http://3g.163.com",@"网易"] ;
+                [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,7)",@"7",@"https://m.taobao.com",@"淘宝"] ;
+                
+                [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,8)",@"8",@"http://i.ifeng.com",@"凤凰网"] ;
+                
+                [db executeUpdate:@"INSERT INTO url (id,url,url_txt,hits,px) VALUES (?,?,?,1,9)",@"9",@"http://m.hexun.com",@"和讯财经网"] ;
+
             }
             
           if (![sharedDbManagerInstance isTableOK:@"person_url" DbName:db]) {

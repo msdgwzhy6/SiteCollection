@@ -11,6 +11,7 @@
 @interface WebViewController ()
 {
     UIActivityIndicatorView *acView;
+    
 }
 @property (nonatomic,strong)NSString * webURL;
 @property (nonatomic,strong)UIWebView *webView;
@@ -54,13 +55,18 @@
     [self.webView setScalesPageToFit:YES];
     NSURLRequest *request = [NSURLRequest requestWithURL:[NSURL URLWithString:_webURL]];
     [self.webView loadRequest:request];
-    UIBarButtonItem * barBtn = [[UIBarButtonItem alloc]initWithTitle:@"返回" style:UIBarButtonItemStylePlain target:self action:@selector(btn_click)];
-    self.navigationItem.leftBarButtonItem=barBtn;
     
     
     
 
 }
+-(void)AddBtnOfReturn
+{
+    UIBarButtonItem * barBtn = [[UIBarButtonItem alloc]initWithTitle:@"返回" style:UIBarButtonItemStylePlain target:self action:@selector(btn_click)];
+    self.navigationItem.leftBarButtonItem=barBtn;
+
+}
+
 
 - (void)webViewDidFinishLoad:(UIWebView *)webView{
     [acView stopAnimating];
